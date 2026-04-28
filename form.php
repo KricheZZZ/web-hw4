@@ -7,6 +7,24 @@
     <!-- Favicon (иконка вкладки) -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
+     <style>
+    
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .back-link a {
+            background: #3a86ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-link a:hover {
+            background: #2666cc;
+        }
+    </style>
 </head>
 <body>
 <!-- Видеофон -->
