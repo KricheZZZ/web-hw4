@@ -26,7 +26,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сохранённые анкеты </title>
+    <title>Сохранённые анкеты</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
     <style>
         table {
@@ -67,8 +68,15 @@ try {
     </style>
 </head>
 <body>
+<video autoplay muted loop id="bgVideo">
+    <source src="background.mp4" type="video/mp4">
+</video>
+<header class="site-header">
+    <div class="header-content">
+        <h1>Сохранённые анкеты</h1>
+    </div>
+</header>
 <div class="container">
-    <h1>Сохранённые анкеты</h1>
     <p>Всего записей: <?= count($applications) ?></p>
 
     <table>
@@ -108,5 +116,10 @@ try {
         <a href="index.php">← Вернуться к форме</a>
     </div>
 </div>
+<footer class="site-footer">
+    <div class="footer-content">
+        <p>&copy; 2026 Все права защищены.</p>
+    </div>
+</footer>
 </body>
 </html>

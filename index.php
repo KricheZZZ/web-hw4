@@ -1,6 +1,4 @@
 <?php
-
-
 header('Content-Type: text/html; charset=UTF-8');
 
 // Функция для подключения к БД
@@ -36,8 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $errors = [];
     $values = [];
 
-    // Список полей
+    // Список полей (для cookies ошибок)
     $fields = ['full_name', 'phone', 'email', 'birth_date', 'gender', 'biography', 'contract_accepted', 'languages'];
+    // Для ФИО отдельно храним три компонента
+    $name_parts = ['last_name', 'first_name', 'patronymic'];
 
     // Проверяем наличие cookies с ошибками
     foreach ($fields as $field) {
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Выводим сообщения об ошибках и удаляем куки
     if ($errors['full_name']) {
         setcookie('full_name_error', '', 1);
+        // значения трёх полей удалим позже, но пока удаляем cookie full_name_value (не используется)
         setcookie('full_name_value', '', 1);
         $messages[] = '<div class="error-message">ФИО должно содержать только буквы и пробелы (макс. 150 символов).</div>';
     }
@@ -86,8 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $messages[] = '<div class="error-message">Выберите хотя бы один язык программирования из списка.</div>';
     }
 
-    // Получаем ранее введённые значения из cookies
-    foreach ($fields as $field) {
+    // Получаем ранее введённые значения из cookies для трёх частей ФИО
+    $values['last_name'] = empty($_COOKIE['last_name_value']) ? '' : $_COOKIE['last_name_value'];
+    $values['first_name'] = empty($_COOKIE['first_name_value']) ? '' : $_COOKIE['first_name_value'];
+    $values['patronymic'] = empty($_COOKIE['patronymic_value']) ? '' : $_COOKIE['patronymic_value'];
+    // Формируем полное ФИО для отображения в форме (хотя мы его не используем, но может понадобиться для совместимости)
+    $values['full_name'] = trim($values['last_name'] . ' ' . $values['first_name'] . ' ' . $values['patronymic']);
+
+    // Остальные поля
+    $other_fields = ['phone', 'email', 'birth_date', 'gender', 'biography', 'contract_accepted', 'languages'];
+    foreach ($other_fields as $field) {
         $values[$field] = empty($_COOKIE[$field . '_value']) ? '' : $_COOKIE[$field . '_value'];
     }
     // Для языков – преобразуем строку в массив
@@ -126,7 +135,12 @@ else {
     $errors = false;
 
     // Получаем данные из POST
-    $full_name = trim($_POST['full_name'] ?? '');
+    $last_name = trim($_POST['last_name'] ?? '');
+    $first_name = trim($_POST['first_name'] ?? '');
+    $patronymic = trim($_POST['patronymic'] ?? '');
+    $full_name = trim($last_name . ' ' . $first_name . ' ' . $patronymic);
+    // Убираем лишние пробелы
+    $full_name = preg_replace('/\s+/', ' ', $full_name);
     $phone = trim($_POST['phone'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $birth_date = trim($_POST['birth_date'] ?? '');
@@ -148,7 +162,11 @@ else {
         setcookie('full_name_error', '1', time() + 24*3600);
         $errors = true;
     }
-    setcookie('full_name_value', $full_name, time() + 30*24*3600);
+    // Сохраняем отдельные части для восстановления формы
+    setcookie('last_name_value', $last_name, time() + 30*24*3600);
+    setcookie('first_name_value', $first_name, time() + 30*24*3600);
+    setcookie('patronymic_value', $patronymic, time() + 30*24*3600);
+    // При ошибке также устанавливаем full_name_error (уже установлен)
 
     // Телефон: допустимые символы и длина от 6 до 12
     if (empty($phone)) {
@@ -279,6 +297,10 @@ else {
         foreach ($fields as $field) {
             setcookie($field . '_error', '', 1);
         }
+        // Удаляем куки частей ФИО
+        setcookie('last_name_value', '', 1);
+        setcookie('first_name_value', '', 1);
+        setcookie('patronymic_value', '', 1);
 
         // Устанавливаем куку об успешном сохранении
         setcookie('save', '1', time() + 24*3600);

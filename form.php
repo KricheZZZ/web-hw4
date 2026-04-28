@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анкета</title>
+    <!-- Favicon (иконка вкладки) -->
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <h1>Анкета</h1>
+<!-- Видеофон -->
+<video autoplay muted loop id="bgVideo">
+    <source src="background.mp4" type="video/mp4">
+    <!-- если видео не загрузится, будет фон из CSS -->
+</video>
 
+<!-- Шапка -->
+<header class="site-header">
+    <div class="header-content">
+        <h1>Анкета пользователя</h1>
+        <p>Заполните форму – данные сохранятся в базу данных</p>
+    </div>
+</header>
+
+<div class="container">
     <?php if (!empty($messages)): ?>
         <div class="messages">
             <?php foreach ($messages as $msg): ?>
@@ -19,65 +33,85 @@
     <?php endif; ?>
 
     <form method="post" action="index.php">
-        <div class="form-group">
-            <label for="full_name">ФИО *</label>
-            <input type="text" id="full_name" name="full_name"
-                   value="<?= htmlspecialchars($values['full_name'] ?? '') ?>"
-                   <?= !empty($errors['full_name']) ? 'class="error"' : '' ?>>
-            <?php if (!empty($errors['full_name'])): ?>
-                <span class="field-error">Некорректное ФИО</span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Телефон *</label>
-            <input type="tel" id="phone" name="phone"
-                   value="<?= htmlspecialchars($values['phone'] ?? '') ?>"
-                   <?= !empty($errors['phone']) ? 'class="error"' : '' ?>>
-            <?php if (!empty($errors['phone'])): ?>
-                <span class="field-error">Некорректный телефон</span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="email">E-mail *</label>
-            <input type="email" id="email" name="email"
-                   value="<?= htmlspecialchars($values['email'] ?? '') ?>"
-                   <?= !empty($errors['email']) ? 'class="error"' : '' ?>>
-            <?php if (!empty($errors['email'])): ?>
-                <span class="field-error">Некорректный email</span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="birth_date">Дата рождения *</label>
-            <input type="date" id="birth_date" name="birth_date"
-                   value="<?= htmlspecialchars($values['birth_date'] ?? '') ?>"
-                   <?= !empty($errors['birth_date']) ? 'class="error"' : '' ?>>
-            <?php if (!empty($errors['birth_date'])): ?>
-                <span class="field-error">Некорректная дата</span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label>Пол *</label>
-            <div class="radio-group">
-                <label>
-                    <input type="radio" name="gender" value="male"
-                        <?= ($values['gender'] ?? '') === 'male' ? 'checked' : '' ?>
-                        <?= !empty($errors['gender']) ? 'class="error"' : '' ?>> Мужской
-                </label>
-                <label>
-                    <input type="radio" name="gender" value="female"
-                        <?= ($values['gender'] ?? '') === 'female' ? 'checked' : '' ?>
-                        <?= !empty($errors['gender']) ? 'class="error"' : '' ?>> Женский
-                </label>
+        <!-- Блок ФИО: три поля в одну строку -->
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="last_name">Фамилия *</label>
+                <input type="text" id="last_name" name="last_name"
+                       value="<?= htmlspecialchars($values['last_name'] ?? '') ?>"
+                       <?= !empty($errors['full_name']) ? 'class="error"' : '' ?>>
             </div>
-            <?php if (!empty($errors['gender'])): ?>
-                <span class="field-error">Выберите пол</span>
-            <?php endif; ?>
+            <div class="form-group half">
+                <label for="first_name">Имя *</label>
+                <input type="text" id="first_name" name="first_name"
+                       value="<?= htmlspecialchars($values['first_name'] ?? '') ?>"
+                       <?= !empty($errors['full_name']) ? 'class="error"' : '' ?>>
+            </div>
+            <div class="form-group half">
+                <label for="patronymic">Отчество</label>
+                <input type="text" id="patronymic" name="patronymic"
+                       value="<?= htmlspecialchars($values['patronymic'] ?? '') ?>"
+                       <?= !empty($errors['full_name']) ? 'class="error"' : '' ?>>
+            </div>
+        </div>
+        <?php if (!empty($errors['full_name'])): ?>
+            <div class="field-error" style="margin-top: -15px; margin-bottom: 15px;">Некорректное ФИО (только буквы и пробелы, максимум 150 символов)</div>
+        <?php endif; ?>
+
+        <!-- Пол и дата рождения в одной строке -->
+        <div class="form-row">
+            <div class="form-group half">
+                <label>Пол *</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="gender" value="male"
+                            <?= ($values['gender'] ?? '') === 'male' ? 'checked' : '' ?>
+                            <?= !empty($errors['gender']) ? 'class="error"' : '' ?>> Мужской
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="female"
+                            <?= ($values['gender'] ?? '') === 'female' ? 'checked' : '' ?>
+                            <?= !empty($errors['gender']) ? 'class="error"' : '' ?>> Женский
+                    </label>
+                </div>
+                <?php if (!empty($errors['gender'])): ?>
+                    <span class="field-error">Выберите пол</span>
+                <?php endif; ?>
+            </div>
+            <div class="form-group half">
+                <label for="birth_date">Дата рождения *</label>
+                <input type="date" id="birth_date" name="birth_date"
+                       value="<?= htmlspecialchars($values['birth_date'] ?? '') ?>"
+                       <?= !empty($errors['birth_date']) ? 'class="error"' : '' ?>>
+                <?php if (!empty($errors['birth_date'])): ?>
+                    <span class="field-error">Некорректная дата</span>
+                <?php endif; ?>
+            </div>
         </div>
 
+        <!-- Телефон и email в одной строке -->
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="phone">Телефон *</label>
+                <input type="tel" id="phone" name="phone"
+                       value="<?= htmlspecialchars($values['phone'] ?? '') ?>"
+                       <?= !empty($errors['phone']) ? 'class="error"' : '' ?>>
+                <?php if (!empty($errors['phone'])): ?>
+                    <span class="field-error">Некорректный телефон</span>
+                <?php endif; ?>
+            </div>
+            <div class="form-group half">
+                <label for="email">E-mail *</label>
+                <input type="email" id="email" name="email"
+                       value="<?= htmlspecialchars($values['email'] ?? '') ?>"
+                       <?= !empty($errors['email']) ? 'class="error"' : '' ?>>
+                <?php if (!empty($errors['email'])): ?>
+                    <span class="field-error">Некорректный email</span>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Остальные поля -->
         <div class="form-group">
             <label for="languages">Любимые языки программирования * (выберите один или несколько)</label>
             <select id="languages" name="languages[]" multiple size="6"
@@ -119,5 +153,13 @@
         <a href="view.php">Просмотр анкет</a>
     </div>
 </div>
+
+<!-- Подвал -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <p>&copy; 2026 Все права защищены. Учебный проект.</p>
+    </div>
+</footer>
+
 </body>
 </html>
