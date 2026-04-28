@@ -297,10 +297,7 @@ else {
         foreach ($fields as $field) {
             setcookie($field . '_error', '', 1);
         }
-        // Удаляем куки частей ФИО
-        setcookie('last_name_value', '', 1);
-        setcookie('first_name_value', '', 1);
-        setcookie('patronymic_value', '', 1);
+       
 
         // Устанавливаем куку об успешном сохранении
         setcookie('save', '1', time() + 24*3600);
