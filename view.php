@@ -118,7 +118,7 @@ try {
 </div>
 <footer class="site-footer">
     <div class="footer-content">
-        <p>&copy; 2026 Все права защищены.</p>
+        <p>&copy; 2026 ЛАБА 4</p>
     </div>
 </footer>
 </body>

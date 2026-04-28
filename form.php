@@ -149,7 +149,7 @@
         <button type="submit">Сохранить</button>
     </form>
 
-    <div class="footer-links">
+    <div class="back-link">
         <a href="view.php">Просмотр анкет</a>
     </div>
 </div>
@@ -157,7 +157,7 @@
 <!-- Подвал -->
 <footer class="site-footer">
     <div class="footer-content">
-        <p>&copy; 2026 Все права защищены. Учебный проект.</p>
+        <p>&copy; 2026 ЛАБА 4</p>
     </div>
 </footer>
 
